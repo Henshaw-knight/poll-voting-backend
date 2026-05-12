@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { PollOption } from './poll-option.entity';
+import { Vote } from 'src/votes/entities/vote.entity';
 
 export enum PollStatus {
   ACTIVE = 'active',
@@ -34,6 +35,9 @@ export class Poll {
 
   @OneToMany(() => PollOption, (option) => option.poll, { cascade: true })
   options: PollOption[];
+
+  @OneToMany(() => Vote, (vote) => vote.poll)
+  votes: Vote[];
 
   @CreateDateColumn()
   createdAt: Date;
