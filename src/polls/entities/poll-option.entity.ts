@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Poll } from './poll.entity';
-import { Vote } from 'src/votes/entities/vote.entity';
+import { Vote } from '../../votes/entities/vote.entity';
 
 @Entity('poll_options')
 export class PollOption {

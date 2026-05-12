@@ -1,6 +1,6 @@
-import { PollOption } from 'src/polls/entities/poll-option.entity';
-import { Poll } from 'src/polls/entities/poll.entity';
-import { User } from 'src/users/entities/user.entity';
+import { PollOption } from '../../polls/entities/poll-option.entity';
+import { Poll } from '../../polls/entities/poll.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,

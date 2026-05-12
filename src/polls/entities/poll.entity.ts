@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { PollOption } from './poll-option.entity';
-import { Vote } from 'src/votes/entities/vote.entity';
+import { Vote } from '../../votes/entities/vote.entity';
 
 export enum PollStatus {
   ACTIVE = 'active',

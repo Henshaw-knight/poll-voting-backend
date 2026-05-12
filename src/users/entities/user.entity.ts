@@ -1,11 +1,12 @@
-import { Poll } from 'src/polls/entities/poll.entity';
-import { Vote } from 'src/votes/entities/vote.entity';
+import { Poll } from '../../polls/entities/poll.entity';
+import { Vote } from '../../votes/entities/vote.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum UserRole {
