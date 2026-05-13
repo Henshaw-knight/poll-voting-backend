@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Poll } from '../../polls/entities/poll.entity';
 import { Vote } from '../../votes/entities/vote.entity';
 import {
@@ -26,6 +27,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()

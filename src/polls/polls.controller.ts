@@ -1,14 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { PollsService } from './polls.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { User, UserRole } from 'src/users/entities/user.entity';
+import { UserRole } from 'src/users/entities/user.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { PollStatus } from './entities/poll.entity';
 import { UpdatePollDto } from './dto/update-poll.dto';
 import { UpdatePollStatusDto } from './dto/update-poll-status.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('polls')
+@UseGuards(JwtAuthGuard)
 export class PollsController {
   constructor(private readonly pollsService: PollsService) {}
 
