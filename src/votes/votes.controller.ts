@@ -1,8 +1,10 @@
-import { Body, Controller, Post, Request } from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { VotesService } from './votes.service';
 import { CreateVoteDto } from './dto/create-vote.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('votes')
+@UseGuards(JwtAuthGuard)
 export class VotesController {
   constructor(private readonly votesService: VotesService) {}
 
