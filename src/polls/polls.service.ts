@@ -6,6 +6,7 @@ import { PollOption } from './entities/poll-option.entity';
 import { CreatePollDto } from './dto/create-poll.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdatePollDto } from './dto/update-poll.dto';
+import { Vote } from 'src/votes/entities/vote.entity';
 
 @Injectable()
 export class PollsService {
@@ -15,6 +16,9 @@ export class PollsService {
 
     @InjectRepository(PollOption)
     private readonly pollOptionRepository: Repository<PollOption>,
+
+    @InjectRepository(Vote)
+    private readonly voteRepository: Repository<Vote>,
   ) {}
 
   async create(dto: CreatePollDto, creator: User): Promise<Poll> {
@@ -74,6 +78,8 @@ export class PollsService {
 
   async remove(id: string): Promise<void> {
     const poll = await this.findOne(id);
+
+    await this.voteRepository.delete({ poll: { id } });
     await this.pollRepository.remove(poll);
   }
 }
