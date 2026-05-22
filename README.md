@@ -1,98 +1,310 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# CivicPulse — Poll & Voting System (Backend)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A robust REST API for a civic engagement poll and voting platform. Built with NestJS, PostgreSQL, and TypeORM. Features JWT authentication, role-based access control, vote submission with duplicate prevention, and state-based results aggregation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Table of Contents
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Database Migrations](#database-migrations)
+- [API Reference](#api-reference)
+- [Business Logic](#business-logic)
 
-## Project setup
+---
 
-```bash
-$ npm install
+## Overview
+
+CivicPulse Backend powers a poll and voting system where users can sign up with their Nigerian state, vote on active polls, and view results broken down by state. Admins can create, update, open, close, and delete polls.
+
+---
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| NestJS | Backend framework |
+| PostgreSQL | Relational database |
+| TypeORM | ORM and migrations |
+| Passport + JWT | Authentication |
+| bcrypt | Password hashing |
+| class-validator | DTO validation |
+
+---
+
+## Features
+
+- JWT-based authentication (signup & login)
+- Role-based access control (user / admin)
+- Poll management — create, update, open/close, delete (admin only)
+- One vote per user per poll enforcement (DB-level unique constraint)
+- Vote state copied from user profile at vote time
+- Results aggregation with optional state-based filtering
+- Password excluded from all API responses
+- Global exception handling and validation pipe
+
+---
+
+## Project Structure
+
+```
+src/
+├── auth/               # Authentication — signup, login, JWT strategy, guards
+├── users/              # User entity and service
+├── polls/              # Poll and PollOption entities, CRUD
+├── votes/              # Vote submission
+├── results/            # Results aggregation with state filtering
+└── common/             # Shared decorators
 ```
 
-## Compile and run the project
+---
+
+## Prerequisites
+
+- Node.js v18+
+- npm v9+
+- PostgreSQL v14+
+- NestJS CLI (`npm install -g @nestjs/cli`)
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/Henshaw-knight/poll-voting-backend.git
+cd poll-voting-backend
 ```
 
-## Run tests
+### 2. Install dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+### 3. Set up environment variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file in the project root. See [Environment Variables](#environment-variables) for the full list.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 4. Create the database
+
+Create a PostgreSQL database matching the name in your `.env`:
+
+```sql
+CREATE DATABASE poll_voting_db;
+```
+
+### 5. Run migrations
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 6. Start the development server
 
-## Resources
+```bash
+npm run start:dev
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The API will be available at `http://localhost:3000/api/v1`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Environment Variables
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Create a `.env` file in the project root with the following variables:
 
-## Stay in touch
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+DB_NAME=poll_voting_db
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# JWT
+JWT_SECRET=your_super_secret_key
+JWT_EXPIRES_IN=1d
 
-## License
+# App
+PORT=3000
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+| Variable | Description | Example |
+|---|---|---|
+| `DB_HOST` | PostgreSQL host | `localhost` |
+| `DB_PORT` | PostgreSQL port | `5432` |
+| `DB_USERNAME` | Database username | `postgres` |
+| `DB_PASSWORD` | Database password | `password` |
+| `DB_NAME` | Database name | `poll_voting_db` |
+| `JWT_SECRET` | Secret key for signing JWT tokens | any long random string |
+| `JWT_EXPIRES_IN` | JWT expiry duration | `1d`, `2d`, `7d` |
+| `PORT` | Port the server runs on | `3000` |
+
+---
+
+## Database Migrations
+
+This project uses TypeORM migrations with `synchronize: false` for full control over schema changes.
+
+```bash
+# Generate a new migration from entity changes
+npm run migration:generate -- src/migrations/MigrationName
+
+# Run pending migrations
+npm run migration:run
+
+# Revert the last migration
+npm run migration:revert
+```
+
+---
+
+## API Reference
+
+All endpoints are prefixed with `/api/v1`.
+
+### Authentication
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/auth/signup` | Register a new user | Public |
+| POST | `/auth/login` | Login and receive JWT | Public |
+
+**Signup request body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "state": "Lagos"
+}
+```
+
+**Login request body:**
+```json
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Auth response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "uuid",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "state": "Lagos",
+    "role": "user",
+    "createdAt": "2026-05-13T15:16:49.734Z"
+  }
+}
+```
+
+---
+
+### Polls
+
+All poll endpoints require a valid JWT token in the `Authorization` header:
+```
+Authorization: Bearer <token>
+```
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/polls` | Get all polls | Auth |
+| GET | `/polls?status=active` | Get polls filtered by status | Auth |
+| GET | `/polls/:id` | Get a single poll with options | Auth |
+| POST | `/polls` | Create a new poll | Admin |
+| PATCH | `/polls/:id` | Update poll title/description | Admin |
+| PATCH | `/polls/:id/status` | Open or close a poll | Admin |
+| DELETE | `/polls/:id` | Delete a poll | Admin |
+
+**Create poll request body:**
+```json
+{
+  "title": "Best JavaScript Framework",
+  "description": "Pick your favourite",
+  "options": ["Angular", "React", "Vue", "Svelte"]
+}
+```
+
+---
+
+### Votes
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/votes` | Cast a vote on a poll | Auth |
+
+**Request body:**
+```json
+{
+  "pollId": "poll-uuid",
+  "optionId": "option-uuid"
+}
+```
+
+---
+
+### Results
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/results/:pollId` | Get results for a poll | Auth |
+| GET | `/results/:pollId?state=Lagos` | Get results filtered by state | Auth |
+
+**Response:**
+```json
+{
+  "pollId": "uuid",
+  "title": "Best JavaScript Framework",
+  "status": "active",
+  "totalVotes": 10,
+  "filteredByState": null,
+  "results": [
+    {
+      "optionId": "uuid",
+      "optionText": "Angular",
+      "voteCount": 5,
+      "percentage": 50
+    }
+  ]
+}
+```
+
+---
+
+### Users
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| GET | `/users/me` | Get current user profile | Auth |
+
+---
+
+## Business Logic
+
+**One vote per user per poll** — enforced at two levels:
+- Application level: `VotesService` checks for an existing vote before saving
+- Database level: unique constraint on `(user_id, poll_id)` in the `votes` table
+
+**Admin creation** — there is no public endpoint for creating admin accounts by design. To create an admin, manually update the role in the database:
+
+```sql
+UPDATE users SET role = 'admin' WHERE email = 'your@email.com';
+```
+
+**State on votes** — a user's state is copied from their profile onto the vote at submission time. This means results by state remain accurate even if a user's profile state is updated later.
+
+**Poll deletion** — deleting a poll also deletes all associated votes. Poll options are removed automatically via the `CASCADE` constraint.
